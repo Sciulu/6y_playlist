@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六月的歌 - VTuber Live Music</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="bg-overlay"></div>
+
+    <header>
+        <div class="avatar-wrapper">
+            <img src="assets/avatar.jpg" alt="Avatar" class="avatar" id="avatarImg">
+        </div>
+        <div class="vtuber-title">六月的歌</div>
+        <div class="vtuber-bio">欢迎点歌，点击任意卡片即可自动复制点歌指令</div>
+        
+        <div class="btn-group">
+            <a href="#" target="_blank" class="btn" id="liveBtn">直播间</a>
+            <a href="#" target="_blank" class="btn" id="spaceBtn">个人主页</a>
+            <button class="btn" onclick="pickRandomSong()">随便听听</button>
+        </div>
+    </header>
+
+    <div class="filter-panel">
+        <input type="text" id="searchInput" class="search-bar" placeholder="搜索歌名、原唱、曲风..." oninput="handleSearch()">
+        <div class="filter-row">
+            <label style="font-size:12px; color:var(--text-sub);">分类筛选：</label>
+            <select id="genreSelect" onchange="applyFilters()"><option value="all">所有曲风</option></select>
+            <select id="artistSelect" onchange="applyFilters()"><option value="all">所有歌手</option></select>
+        </div>
+        <div class="initials-bar" id="initialsBar"></div>
+    </div>
+
+    <div class="song-container" id="songList"></div>
+    <div class="pagination" id="pagination"></div>
+
+    <div class="modal" id="randomModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:var(--primary)">今日幸运曲目</h3>
+            <div id="randomResult" style="font-size: 18px; font-weight: bold; margin: 20px 0; color: var(--text-dark);"></div>
+            <div id="randomMeta" style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;"></div>
+            <div class="btn-group" style="justify-content: center;">
+                <button class="btn" style="background: var(--primary); color: white; border-color: var(--primary);" onclick="copyRandomSong()">一键点歌</button>
+                <button class="btn" style="background: #f0f0f0; border-color: #e0e0e0; color: #666;" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">复制成功，快去直播间发送吧！</div>
+
+    <!-- 引入 CSV 解析工具 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    
+    <!-- 引入自己的脚本 -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
