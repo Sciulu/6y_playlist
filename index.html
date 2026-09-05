@@ -10,10 +10,14 @@
     <div class="bg-overlay"></div>
 
     <header>
-        <div class="avatar-wrapper">
+        <!-- 加入了 onclick 事件 -->
+        <div class="avatar-wrapper" onclick="playAvatarAnim()">
             <img src="assets/avatar.jpg" alt="Avatar" class="avatar" id="avatarImg">
         </div>
         <div class="vtuber-title">六月的歌</div>
+        
+        <div id="totalCount" class="total-count"># 收录曲目正在清点中...</div>
+        
         <div class="vtuber-bio">欢迎点歌，点击任意卡片即可自动复制点歌指令</div>
         
         <div class="btn-group">
@@ -23,7 +27,7 @@
         </div>
     </header>
 
-    <div class="filter-panel">
+    <div class="filter-panel" id="filterPanel">
         <input type="text" id="searchInput" class="search-bar" placeholder="搜索歌名、原唱、曲风..." oninput="handleSearch()">
         <div class="filter-row">
             <label style="font-size:12px; color:var(--text-sub);">分类筛选：</label>
@@ -53,7 +57,7 @@
     <!-- 引入 CSV 解析工具 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
-    <!-- 引入自己的脚本 -->
+    <!-- 引入脚本 -->
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>
