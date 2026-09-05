@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
 
 :root {
     --primary: #4a7c7d;
@@ -14,10 +14,22 @@
 
 * { box-sizing: border-box; }
 
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(240, 248, 246, 0.3);
+}
+::-webkit-scrollbar-thumb {
+    background: #75a8a9; 
+    border-radius: 6px;
+}
+
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Noto Sans SC', sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     color: var(--text-dark);
     background: url('../assets/bg-main.jpg') no-repeat center center fixed;
@@ -54,8 +66,13 @@ header {
     position: relative;
 }
 
-.avatar-wrapper {
-    position: relative;
+/* 优化：修改外层容器，作为点击动画的本体 */
+.avatar-wrapper { 
+    position: relative; 
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; 
+    display: inline-flex; /* 保证变形中心点完全居中 */
+    border-radius: 50%;
 }
 
 .avatar {
@@ -65,11 +82,20 @@ header {
     border: 3px solid white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     object-fit: cover;
-    transition: transform 0.3s ease;
+    /* 优化：使用了更Q弹的缓动曲线来衔接悬浮 */
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
 }
 
-.avatar:hover {
-    transform: scale(1.08) rotate(5deg);
+/* 弹跳动画现在由 Wrapper 承载，更加平滑 */
+.avatar-bounce {
+    animation: jellyBounce 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes jellyBounce {
+    0% { transform: scale(1) rotate(0deg); }
+    30% { transform: scale(0.85) rotate(-8deg); }
+    60% { transform: scale(1.15) rotate(8deg); }
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 .vtuber-title {
@@ -78,6 +104,17 @@ header {
     font-weight: 700;
     color: var(--primary);
     letter-spacing: 1px;
+}
+
+.total-count {
+    margin: 4px 0 12px;
+    font-size: 12px;
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.7);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    border: 1px solid var(--glass-border);
 }
 
 .vtuber-bio {
@@ -113,14 +150,6 @@ header {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.btn:hover {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(74, 124, 125, 0.3);
-}
-
 .filter-panel {
     width: 90%;
     max-width: 1000px;
@@ -132,6 +161,10 @@ header {
     padding: 16px 20px;
     box-shadow: var(--shadow);
     margin-bottom: 20px;
+    position: sticky;
+    top: 10px; 
+    z-index: 100;
+    transition: all 0.3s ease;
 }
 
 .search-bar {
@@ -181,16 +214,20 @@ header {
     border: none;
     background: rgba(255, 255, 255, 0.5);
     color: var(--text-dark);
-    width: 26px;
+    min-width: 26px; 
+    padding: 0 6px;
     height: 26px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.initial-btn:hover, .initial-btn.active {
+.initial-btn.active {
     background: var(--primary);
     color: white;
 }
@@ -217,12 +254,8 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.song-card:hover {
-    transform: translateY(-4px);
-    background: var(--glass-solid);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .song-name {
@@ -271,7 +304,7 @@ header {
     transition: all 0.2s;
 }
 
-.page-btn:hover, .page-btn.active {
+.page-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
@@ -282,53 +315,74 @@ header {
     cursor: not-allowed;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(6px);
-    z-index: 200;
-    justify-content: center;
-    align-items: center;
+/* 将所有涉及 hover 的特效包裹在这个媒体查询中，确保手机端绝对清爽 */
+@media (hover: hover) and (pointer: fine) {
+    /* 优化：鼠标悬浮的放大部分交还给内层 img 负责 */
+    .avatar:hover {
+        transform: scale(1.08) rotate(5deg);
+    }
+    .btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 124, 125, 0.3);
+    }
+    .initial-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+    .song-card:hover {
+        transform: translateY(-4px);
+        background: var(--glass-solid);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+    .page-btn:hover:not(.active) {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
 }
 
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    max-width: 320px;
-    width: 80%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    animation: popIn 0.3s ease;
+@media (max-width: 600px) {
+    header {
+        width: 95%;
+        padding: 18px 12px;
+        margin: 15px auto 15px;
+    }
+    .avatar {
+        width: 80px;
+        height: 80px;
+    }
+    .vtuber-title {
+        font-size: 22px;
+    }
+    .btn-group {
+        gap: 8px;
+    }
+    .btn {
+        min-width: 80px;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    .filter-panel {
+        width: 95%;
+        padding: 12px 16px;
+        border-radius: 16px;
+    }
+    .song-container {
+        width: 95%;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .song-card {
+        padding: 14px;
+        border-radius: 12px;
+    }
 }
 
-@keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-#toast {
-    visibility: hidden;
-    background-color: var(--primary);
-    color: #fff;
-    text-align: center;
-    border-radius: 20px;
-    padding: 10px 20px;
-    position: fixed;
-    z-index: 300;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 13px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    opacity: 0;
-    transition: opacity 0.3s, bottom 0.3s;
-}
-
-#toast.show {
-    visibility: visible;
-    opacity: 1;
-    bottom: 40px;
-}
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 200; justify-content: center; align-items: center; }
+.modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; width: 80%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: popIn 0.3s ease; }
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#toast { visibility: hidden; background-color: var(--primary); color: #fff; text-align: center; border-radius: 20px; padding: 10px 20px; position: fixed; z-index: 300; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+#toast.show { visibility: visible; opacity: 1; bottom: 40px; }
