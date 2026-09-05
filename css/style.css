@@ -66,12 +66,11 @@ header {
     position: relative;
 }
 
-/* 优化：修改外层容器，作为点击动画的本体 */
 .avatar-wrapper { 
     position: relative; 
     cursor: pointer;
     -webkit-tap-highlight-color: transparent; 
-    display: inline-flex; /* 保证变形中心点完全居中 */
+    display: inline-flex;
     border-radius: 50%;
 }
 
@@ -82,11 +81,9 @@ header {
     border: 3px solid white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     object-fit: cover;
-    /* 优化：使用了更Q弹的缓动曲线来衔接悬浮 */
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
 }
 
-/* 弹跳动画现在由 Wrapper 承载，更加平滑 */
 .avatar-bounce {
     animation: jellyBounce 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -148,6 +145,7 @@ header {
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 4px 14px rgba(74, 124, 125, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .filter-panel {
@@ -225,6 +223,7 @@ header {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .initial-btn.active {
@@ -302,6 +301,7 @@ header {
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .page-btn.active {
@@ -315,9 +315,18 @@ header {
     cursor: not-allowed;
 }
 
-/* 将所有涉及 hover 的特效包裹在这个媒体查询中，确保手机端绝对清爽 */
+/* 新增：全局的按压（点击瞬间）动画反馈，完美解决手机端没反应的问题 */
+.song-card:active {
+    transform: scale(0.96) !important;
+    background: var(--glass-solid);
+    transition: transform 0.1s ease;
+}
+.btn:active, .initial-btn:active, .page-btn:active:not(:disabled) {
+    transform: scale(0.94) !important;
+    transition: transform 0.1s ease;
+}
+
 @media (hover: hover) and (pointer: fine) {
-    /* 优化：鼠标悬浮的放大部分交还给内层 img 负责 */
     .avatar:hover {
         transform: scale(1.08) rotate(5deg);
     }
