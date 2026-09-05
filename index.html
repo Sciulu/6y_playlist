@@ -6,11 +6,11 @@
     <title>六月的歌 - VTuber Live Music</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<!-- 核心修复：加入 ontouchstart 唤醒手机端按压反馈 -->
+<body ontouchstart="">
     <div class="bg-overlay"></div>
 
     <header>
-        <!-- 加入了 onclick 事件 -->
         <div class="avatar-wrapper" onclick="playAvatarAnim()">
             <img src="assets/avatar.jpg" alt="Avatar" class="avatar" id="avatarImg">
         </div>
@@ -54,10 +54,7 @@
 
     <div id="toast">复制成功，快去直播间发送吧！</div>
 
-    <!-- 引入 CSV 解析工具 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    
-    <!-- 引入脚本 -->
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>
