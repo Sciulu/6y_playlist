@@ -6,13 +6,9 @@ let currentPage = 1;
 let selectedInitial = 'ALL';
 let currentRandomSong = null;
 
-// ==========================================
-// 核心拉取逻辑
-// ==========================================
 function loadSongsFromSheet() {
     const container = document.getElementById('songList');
-    // 修改了加载提示文字
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">正在整理忍者手账. . .</div>';
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">正在整理忍者手账...</div>';
 
     Papa.parse(CONFIG.sheetCsvUrl, {
         download: true,
@@ -21,18 +17,23 @@ function loadSongsFromSheet() {
         complete: function(results) {
             rawSongs = results.data;          
             filteredSongs = [...rawSongs];    
+            
+            const totalCountElement = document.getElementById('totalCount');
+            if(rawSongs.length > 0) {
+                totalCountElement.innerText = `# 当前已收录 ${rawSongs.length} 首曲目`;
+            } else {
+                totalCountElement.innerText = `# 暂未收录曲目`;
+            }
+
             init();                           
         },
         error: function(err) {
             console.error("读取表格失败:", err);
-            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #d32f2f; padding: 40px 0;">同步歌单失败，请检查表格链接是否正确。</div>';
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #d32f2f; padding: 40px 0;">同步歌单失败，请检查文件路径是否正确。</div>';
         }
     });
 }
 
-// ==========================================
-// 渲染逻辑
-// ==========================================
 function init() {
     buildFilterOptions();
     buildInitialsBar();
@@ -91,7 +92,7 @@ function renderList() {
     container.innerHTML = '';
 
     if (filteredSongs.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">未找到相关歌曲</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">没找到相关的歌本记录呢</div>`;
         document.getElementById('pagination').innerHTML = '';
         return;
     }
@@ -127,7 +128,7 @@ function renderPagination() {
     prevBtn.className = 'page-btn';
     prevBtn.textContent = '‹';
     prevBtn.disabled = currentPage === 1;
-    prevBtn.onclick = () => { currentPage--; renderList(); };
+    prevBtn.onclick = () => { currentPage--; renderList(); window.scrollTo({ top: 300, behavior: 'smooth' }); };
     pagContainer.appendChild(prevBtn);
 
     for (let i = 1; i <= totalPages; i++) {
@@ -135,7 +136,7 @@ function renderPagination() {
             const btn = document.createElement('button');
             btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
             btn.textContent = i;
-            btn.onclick = () => { currentPage = i; renderList(); };
+            btn.onclick = () => { currentPage = i; renderList(); window.scrollTo({ top: 300, behavior: 'smooth' }); };
             pagContainer.appendChild(btn);
         }
     }
@@ -144,7 +145,7 @@ function renderPagination() {
     nextBtn.className = 'page-btn';
     nextBtn.textContent = '›';
     nextBtn.disabled = currentPage === totalPages;
-    nextBtn.onclick = () => { currentPage++; renderList(); };
+    nextBtn.onclick = () => { currentPage++; renderList(); window.scrollTo({ top: 300, behavior: 'smooth' }); };
     pagContainer.appendChild(nextBtn);
 }
 
@@ -190,6 +191,17 @@ function showToast(msg) {
     toast.className = 'show';
     clearTimeout(toastTimeout);
     toastTimeout = setTimeout(() => { toast.className = ''; }, 2000);
+}
+
+// 修改：处理头像点击动画的逻辑，将动画赋予给外层包裹容器
+function playAvatarAnim() {
+    const wrapper = document.querySelector('.avatar-wrapper'); // 关键点：选中 wrapper 而不是 img
+    // 先移除动画类，防止连续点击失效
+    wrapper.classList.remove('avatar-bounce');
+    // 强制触发浏览器重排，使动画能够重新播放
+    void wrapper.offsetWidth;
+    // 重新添加动画类
+    wrapper.classList.add('avatar-bounce');
 }
 
 window.onload = loadSongsFromSheet;
