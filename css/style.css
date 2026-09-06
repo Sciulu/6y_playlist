@@ -395,3 +395,135 @@ header {
 @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 #toast { visibility: hidden; background-color: var(--primary); color: #fff; text-align: center; border-radius: 20px; padding: 10px 20px; position: fixed; z-index: 300; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
 #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
+/* ==================== 许愿绘马墙 & NEW角标 样式 ==================== */
+
+.btn-wish {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    color: #d14b64;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+}
+
+.wish-board-section {
+    width: 90%;
+    max-width: 1000px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+    text-align: left;
+    padding-left: 8px;
+}
+
+.ema-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+/* 绘马卡片设计 */
+.ema-card {
+    background: rgba(250, 240, 230, 0.85); /* 木质暖色调 */
+    border: 2px solid #e0c8b0;
+    border-radius: 8px 8px 3px 3px;
+    padding: 12px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90px;
+    transform-origin: top center;
+    animation: swing 4s infinite ease-in-out;
+}
+/* 给不同牌子加上微小的延迟，让它们晃得不那么死板 */
+.ema-card:nth-child(2n) { animation-delay: 0.5s; }
+.ema-card:nth-child(3n) { animation-delay: 1.2s; }
+.ema-card:nth-child(4n) { animation-delay: 0.8s; }
+
+/* 顶部的“钉子” */
+.ema-card::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%;
+    transform: translateX(-50%);
+    width: 6px; height: 6px;
+    background: #a0522d;
+    border-radius: 50%;
+}
+
+@keyframes swing {
+    0% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+    100% { transform: rotate(-2deg); }
+}
+
+.ema-song { font-weight: 700; font-size: 14px; color: #5a3f2d; margin-bottom: 4px; }
+.ema-name { font-size: 11px; color: #8b6b55; }
+.ema-empty { color: #c4b5a9; font-size: 12px; font-weight: 500; }
+
+/* 学习中 标签 */
+.ema-status {
+    position: absolute;
+    bottom: -8px; right: -8px;
+    background: #ff7675;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+    transform: rotate(-10deg);
+    box-shadow: 0 2px 5px rgba(255, 118, 117, 0.4);
+}
+
+/* 许愿输入框 */
+.wish-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    text-align: center;
+    background: #fafafa;
+}
+.wish-input:focus { border-color: #ff9a9e; background: white; }
+
+/* 主歌单中的 NEW 标签 */
+.new-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: #ff4757;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+    .ema-grid {
+        /* 手机端变为两排，每排4个横向滚动，或者2x4网格，这里使用横向滚动最漂亮 */
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scroll-snap-type: x mandatory;
+    }
+    .ema-card {
+        min-width: 120px;
+        scroll-snap-align: start;
+    }
+}
