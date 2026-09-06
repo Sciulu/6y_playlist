@@ -6,8 +6,8 @@ let currentPage = 1;
 let selectedInitial = 'ALL';
 let currentRandomSong = null;
 
-// 初始化 Supabase 数据库
-const supabase = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+// 【修复 Bug】：使用 supabaseClient 作为变量名，避免与官方库冲突
+const supabaseClient = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
 
 // ==========================================
 // 1. 获取 CSV 歌单并加载
@@ -60,7 +60,7 @@ function applyFilters() {
         const sArtist = song.artist ? song.artist.toLowerCase() : '';
         const sGenre = song.genre ? song.genre.toLowerCase() : '';
         const sInitial = song.initial ? song.initial.toUpperCase() : '';
-        const sTag = song.tag ? song.tag.toUpperCase() : ''; // 允许在 tag 或者 genre 里加 NEW
+        const sTag = song.tag ? song.tag.toUpperCase() : ''; 
 
         const matchSearch = sName.includes(query) || sArtist.includes(query) || sGenre.includes(query);
         const matchGenre = genre === 'all' || song.genre === genre;
@@ -165,25 +165,24 @@ function renderPagination() {
 // 读取前 8 条许愿数据
 async function loadWishes() {
     const board = document.getElementById('emaBoard');
-    board.innerHTML = ''; // 清空加载中提示
+    board.innerHTML = ''; 
 
     try {
-        const { data, error } = await supabase
+        // 【修复】这里改用 supabaseClient
+        const { data, error } = await supabaseClient
             .from('wishes')
             .select('*')
-            .order('id', { ascending: false }) // 按时间倒序
+            .order('id', { ascending: false }) 
             .limit(8);
             
         if (error) throw error;
         
-        // 渲染 8 个位置，如果有数据填数据，没数据填空板
         for (let i = 0; i < 8; i++) {
             const wish = data[i];
             const card = document.createElement('div');
             card.className = 'ema-card';
             
             if (wish) {
-                // 有数据
                 let statusHtml = '';
                 if(wish.status) {
                     statusHtml = `<div class="ema-status">${wish.status}</div>`;
@@ -195,7 +194,6 @@ async function loadWishes() {
                     ${statusHtml}
                 `;
             } else {
-                // 没数据，空位
                 card.innerHTML = `<div class="ema-empty">虚位以待<br>等你许愿</div>`;
             }
             board.appendChild(card);
@@ -225,7 +223,6 @@ async function submitWish() {
         return;
     }
 
-    // 防刷拦截：今天是否许过愿
     const today = new Date().toDateString();
     const lastWishDate = localStorage.getItem('lastWishDate');
     if (lastWishDate === today) {
@@ -239,13 +236,13 @@ async function submitWish() {
     btn.disabled = true;
 
     try {
-        const { error } = await supabase
+        // 【修复】这里改用 supabaseClient
+        const { error } = await supabaseClient
             .from('wishes')
             .insert([{ song: song, singer: singer, nickname: nickname }]);
 
         if (error) throw error;
 
-        // 成功！放烟花特效
         confetti({
             particleCount: 100,
             spread: 70,
@@ -253,13 +250,11 @@ async function submitWish() {
             colors: ['#ff9a9e', '#fecfef', '#ffffff']
         });
         
-        // 记录本地日期
         localStorage.setItem('lastWishDate', today);
         
         showToast("许愿成功！已挂上绘马墙");
         closeWishModal();
         
-        // 清空输入框并刷新许愿板
         document.getElementById('wishSong').value = '';
         document.getElementById('wishSinger').value = '';
         document.getElementById('wishName').value = '';
