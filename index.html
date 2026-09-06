@@ -26,14 +26,14 @@
             <a href="#" target="_blank" class="btn" id="liveBtn">直播间</a>
             <a href="#" target="_blank" class="btn" id="spaceBtn">个人主页</a>
             <button class="btn" onclick="pickRandomSong()">随便听听</button>
-            <!-- 新增许愿按钮 -->
-            <button class="btn btn-wish" onclick="openWishModal()">✨ 许愿池</button>
+            <!-- 更改：许愿按钮 -->
+            <button class="btn btn-wish" onclick="openWishModal()">许愿池</button>
         </div>
     </header>
 
-    <!-- 新增：忍者绘马墙展示区 -->
+    <!-- 更改：绘马墙展示区 -->
     <div class="wish-board-section">
-        <div class="section-title">⛩️ 忍者绘马墙 (最新许愿)</div>
+        <div class="section-title">※ 门前绘马 (最新许愿)</div>
         <div class="ema-grid" id="emaBoard">
             <!-- JS 会在这里生成 8 个绘马 -->
             <div style="grid-column: 1/-1; text-align: center; color: var(--text-sub);">正在沟通神明...</div>
@@ -58,7 +58,8 @@
     <!-- 许愿弹窗 -->
     <div class="modal" id="makeWishModal">
         <div class="modal-content">
-            <h3 style="margin-top:0; color:var(--primary)">⛩️ 挂上许愿绘马</h3>
+            <!-- 更改：许愿弹窗标题 -->
+            <h3 style="margin-top:0; color:var(--primary)">※ 挂上许愿绘马 ※</h3>
             <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 15px;">每天只能许愿一次哦，主播会挑选合适的练习~</p>
             <input type="text" id="wishSong" class="wish-input" placeholder="想听的歌名 (必填，限12字)" maxlength="12">
             <input type="text" id="wishSinger" class="wish-input" placeholder="原唱是谁？(选填)" maxlength="12">
