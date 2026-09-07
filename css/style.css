@@ -396,7 +396,7 @@ header {
 #toast { visibility: hidden; background-color: var(--primary); color: #fff; text-align: center; border-radius: 20px; padding: 10px 20px; position: fixed; z-index: 300; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
 #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
 
-/* ==================== 许愿绘马墙 & NEW角标 样式 (风铃短册版) ==================== */
+/* ==================== 许愿绘马墙 & NEW角标 样式 (极简数据卡片版) ==================== */
 
 .btn-wish {
     background: linear-gradient(135deg, var(--primary) 0%, #6ba7a8 100%);
@@ -424,63 +424,59 @@ header {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    padding-top: 15px; /* 为顶部的悬挂线留出空间 */
 }
 
-/* 风铃短册设计 */
+/* 极简卡片设计 */
 .ema-card {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 2px; /* 短册的边角更锐利 */
-    padding: 20px 10px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 16px 12px;
     position: relative;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 105px;
-    transform-origin: top center;
-    /* 轻盈的飘浮动画 */
-    animation: breeze 5s infinite ease-in-out alternate;
+    min-height: 85px;
+    transition: all 0.3s ease;
+    cursor: default;
 }
 
-.ema-card:nth-child(2n) { animation-delay: 1.2s; }
-.ema-card:nth-child(3n) { animation-delay: 0.5s; }
-.ema-card:nth-child(4n) { animation-delay: 2.1s; }
+/* 隐藏钉子 */
+.ema-card::before { display: none; }
 
-/* 顶部的悬挂细线 */
-.ema-card::before {
-    content: '';
-    position: absolute;
-    top: -15px; left: 50%;
-    transform: translateX(-50%);
-    width: 1px; height: 15px;
-    background: rgba(74, 124, 125, 0.4);
+/* 鼠标悬浮和点击交互 */
+@media (hover: hover) and (pointer: fine) {
+    .ema-card:hover {
+        transform: translateY(-4px);
+        background: var(--glass-solid);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+}
+.ema-card:active {
+    transform: scale(0.96) !important;
+    background: var(--glass-solid);
+    transition: transform 0.1s ease;
 }
 
-@keyframes breeze {
-    0% { transform: translateY(0) rotate(-1deg); }
-    100% { transform: translateY(-5px) rotate(1.5deg); }
-}
-
-.ema-song { font-weight: 600; font-size: 14px; color: var(--primary); margin-bottom: 6px; }
+.ema-song { font-weight: 700; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; }
 .ema-name { font-size: 11px; color: var(--text-sub); }
-.ema-empty { color: rgba(90, 110, 127, 0.4); font-size: 12px; font-weight: 500; letter-spacing: 1px; }
+.ema-empty { color: rgba(90, 110, 127, 0.4); font-size: 12px; font-weight: 500; }
 
-/* 学习中 标签 (变成短册底部的一个优雅的小印章) */
+/* 学习中 标签 (变成右上角安静的小角标) */
 .ema-status {
     position: absolute;
-    bottom: 4px; right: 4px;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    background: rgba(255,255,255,0.8);
+    top: -6px; right: -6px;
+    background: var(--accent);
+    color: white;
     font-size: 10px;
-    padding: 2px 4px;
-    border-radius: 2px;
+    padding: 2px 6px;
+    border-radius: 6px;
     font-weight: 500;
+    box-shadow: 0 2px 6px rgba(139, 147, 203, 0.3);
 }
 
 /* 许愿输入框 */
@@ -516,5 +512,5 @@ header {
 
 @media (max-width: 600px) {
     .ema-grid { display: flex; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
-    .ema-card { min-width: 110px; scroll-snap-align: start; }
+    .ema-card { min-width: 120px; scroll-snap-align: start; }
 }
