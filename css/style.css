@@ -396,7 +396,7 @@ header {
 #toast { visibility: hidden; background-color: var(--primary); color: #fff; text-align: center; border-radius: 20px; padding: 10px 20px; position: fixed; z-index: 300; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
 #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
 
-/* ==================== 许愿绘马墙 & NEW角标 样式 (极简数据卡片版) ==================== */
+/* ==================== 许愿绘马墙 & NEW角标 样式 (无界风铃，无卡片版) ==================== */
 
 .btn-wish {
     background: linear-gradient(135deg, var(--primary) 0%, #6ba7a8 100%);
@@ -423,61 +423,99 @@ header {
 .ema-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 16px;
+    padding-top: 25px; /* 给头顶的线和珠子留出空间 */
 }
 
-/* 极简卡片设计 */
+/* 核心：彻底去掉卡片底板，只保留排版和动画 */
 .ema-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 16px 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 10px 5px;
     position: relative;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    min-height: 85px;
-    transition: all 0.3s ease;
-    cursor: default;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 80px;
+    transform-origin: top center;
+    /* 极致轻柔的呼吸飘浮 */
+    animation: float-breeze 6s infinite ease-in-out alternate;
 }
 
-/* 隐藏钉子 */
-.ema-card::before { display: none; }
+.ema-card:nth-child(2n) { animation-delay: 1.2s; }
+.ema-card:nth-child(3n) { animation-delay: 0.5s; }
+.ema-card:nth-child(4n) { animation-delay: 2.1s; }
 
-/* 鼠标悬浮和点击交互 */
-@media (hover: hover) and (pointer: fine) {
-    .ema-card:hover {
-        transform: translateY(-4px);
-        background: var(--glass-solid);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    }
-}
-.ema-card:active {
-    transform: scale(0.96) !important;
-    background: var(--glass-solid);
-    transition: transform 0.1s ease;
-}
-
-.ema-song { font-weight: 700; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; }
-.ema-name { font-size: 11px; color: var(--text-sub); }
-.ema-empty { color: rgba(90, 110, 127, 0.4); font-size: 12px; font-weight: 500; }
-
-/* 学习中 标签 (变成右上角安静的小角标) */
-.ema-status {
+/* 顶部的悬挂细线 */
+.ema-card::before {
+    content: '';
     position: absolute;
-    top: -6px; right: -6px;
-    background: var(--accent);
-    color: white;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-weight: 500;
-    box-shadow: 0 2px 6px rgba(139, 147, 203, 0.3);
+    top: -25px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px; 
+    height: 25px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(74, 124, 125, 0.6));
 }
+
+/* 细线末端的薄荷绿玻璃小珠子 */
+.ema-card::after {
+    content: '';
+    position: absolute;
+    top: 0px; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px; 
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--primary), inset 0 0 2px rgba(255,255,255,0.8);
+}
+
+@keyframes float-breeze {
+    0% { transform: translateY(0) rotate(-1deg); }
+    100% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+/* 纯文字的质感强化（加上一点发光阴影以防看不清） */
+.ema-song { 
+    font-weight: 700; 
+    font-size: 15px; 
+    color: var(--primary); 
+    margin-top: 6px;
+    margin-bottom: 4px; 
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
+    letter-spacing: 1px;
+}
+
+.ema-name { 
+    font-size: 12px; 
+    color: var(--text-sub); 
+    text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+}
+
+.ema-empty { 
+    color: rgba(90, 110, 127, 0.4); 
+    font-size: 12px; 
+    font-weight: 500; 
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+/* 学习中 标签 (变成安静的文字小尾巴) */
+.ema-status {
+    margin-top: 6px;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+.ema-status::before { content: '「 '; }
+.ema-status::after { content: ' 」'; }
 
 /* 许愿输入框 */
 .wish-input {
@@ -511,6 +549,6 @@ header {
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
 @media (max-width: 600px) {
-    .ema-grid { display: flex; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; }
-    .ema-card { min-width: 120px; scroll-snap-align: start; }
+    .ema-grid { display: flex; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
+    .ema-card { min-width: 110px; scroll-snap-align: center; }
 }
