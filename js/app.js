@@ -6,15 +6,9 @@ let currentPage = 1;
 let selectedInitial = 'ALL';
 let currentRandomSong = null;
 
-// 【修复 Bug】：使用 supabaseClient 作为变量名，避免与官方库冲突
-const supabaseClient = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
-
-// ==========================================
-// 1. 获取 CSV 歌单并加载
-// ==========================================
 function loadSongsFromSheet() {
     const container = document.getElementById('songList');
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">正在整理忍者手账...</div>';
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 40px 0;">正在整理歌本...</div>';
 
     Papa.parse(CONFIG.sheetCsvUrl, {
         download: true,
@@ -44,12 +38,8 @@ function init() {
     buildFilterOptions();
     buildInitialsBar();
     applyFilters();
-    loadWishes(); // 加载许愿板
 }
 
-// ==========================================
-// 2. 核心渲染与排序 (包含了 NEW 标签置顶)
-// ==========================================
 function applyFilters() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const genre = document.getElementById('genreSelect').value;
@@ -60,7 +50,6 @@ function applyFilters() {
         const sArtist = song.artist ? song.artist.toLowerCase() : '';
         const sGenre = song.genre ? song.genre.toLowerCase() : '';
         const sInitial = song.initial ? song.initial.toUpperCase() : '';
-        const sTag = song.tag ? song.tag.toUpperCase() : ''; 
 
         const matchSearch = sName.includes(query) || sArtist.includes(query) || sGenre.includes(query);
         const matchGenre = genre === 'all' || song.genre === genre;
@@ -70,7 +59,7 @@ function applyFilters() {
         return matchSearch && matchGenre && matchArtist && matchInitial;
     });
 
-    // 排序核心逻辑：有 tag=NEW 的强制排在最前面
+    // 核心保留：带有 tag="NEW" 的歌曲强制排在最前面
     tempSongs.sort((a, b) => {
         const aIsNew = (a.tag && a.tag.toUpperCase() === 'NEW') ? 1 : 0;
         const bIsNew = (b.tag && b.tag.toUpperCase() === 'NEW') ? 1 : 0;
@@ -96,6 +85,7 @@ function renderList() {
     const pageSongs = filteredSongs.slice(start, start + CONFIG.pageSize);
 
     pageSongs.forEach(song => {
+        // 判断是否带有 NEW 标记
         const isNew = song.tag && song.tag.toUpperCase() === 'NEW';
         const card = document.createElement('div');
         card.className = 'song-card';
@@ -114,7 +104,6 @@ function renderList() {
     renderPagination();
 }
 
-// ---------------- 以下为搜索栏与翻页 (原样保留) ----------------
 function buildFilterOptions() {
     const genres = ['all', ...new Set(rawSongs.map(s => s.genre))];
     const artists = ['all', ...new Set(rawSongs.map(s => s.artist))];
@@ -157,122 +146,6 @@ function renderPagination() {
     pagContainer.appendChild(nextBtn);
 }
 
-
-// ==========================================
-// 3. 许愿墙与数据库交互逻辑
-// ==========================================
-
-// 读取前 8 条许愿数据
-async function loadWishes() {
-    const board = document.getElementById('emaBoard');
-    board.innerHTML = ''; 
-
-    try {
-        // 【修复】这里改用 supabaseClient
-        const { data, error } = await supabaseClient
-            .from('wishes')
-            .select('*')
-            .order('id', { ascending: false }) 
-            .limit(8);
-            
-        if (error) throw error;
-        
-        for (let i = 0; i < 8; i++) {
-            const wish = data[i];
-            const card = document.createElement('div');
-            card.className = 'ema-card';
-            
-            if (wish) {
-                let statusHtml = '';
-                if(wish.status) {
-                    statusHtml = `<div class="ema-status">${wish.status}</div>`;
-                }
-                const safeName = wish.nickname ? wish.nickname : '匿名观众';
-                card.innerHTML = `
-                    <div class="ema-song">${wish.song}</div>
-                    <div class="ema-name">- ${safeName}</div>
-                    ${statusHtml}
-                `;
-            } else {
-                card.innerHTML = `<div class="ema-empty">虚位以待<br>等你许愿</div>`;
-            }
-            board.appendChild(card);
-        }
-    } catch (err) {
-        console.error("加载许愿失败", err);
-        board.innerHTML = '<div style="grid-column: 1/-1; text-align: center; font-size:12px;">似乎与神明的连接暂时中断了...</div>';
-    }
-}
-
-// 许愿弹窗开关
-function openWishModal() {
-    document.getElementById('makeWishModal').style.display = 'flex';
-}
-function closeWishModal() {
-    document.getElementById('makeWishModal').style.display = 'none';
-}
-
-// 提交许愿
-async function submitWish() {
-    const song = document.getElementById('wishSong').value.trim();
-    const singer = document.getElementById('wishSinger').value.trim();
-    const nickname = document.getElementById('wishName').value.trim();
-
-    if (!song) {
-        showToast("至少得写个歌名呀！");
-        return;
-    }
-
-    const today = new Date().toDateString();
-    const lastWishDate = localStorage.getItem('lastWishDate');
-    if (lastWishDate === today) {
-        showToast("今天已经许过一次愿啦，明天再来吧！");
-        closeWishModal();
-        return;
-    }
-
-    const btn = document.getElementById('submitWishBtn');
-    btn.textContent = "挂绘马中...";
-    btn.disabled = true;
-
-    try {
-        // 【修复】这里改用 supabaseClient
-        const { error } = await supabaseClient
-            .from('wishes')
-            .insert([{ song: song, singer: singer, nickname: nickname }]);
-
-        if (error) throw error;
-
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#ff9a9e', '#fecfef', '#ffffff']
-        });
-        
-        localStorage.setItem('lastWishDate', today);
-        
-        showToast("许愿成功！已挂上绘马墙");
-        closeWishModal();
-        
-        document.getElementById('wishSong').value = '';
-        document.getElementById('wishSinger').value = '';
-        document.getElementById('wishName').value = '';
-        loadWishes();
-
-    } catch (err) {
-        console.error("提交失败", err);
-        showToast("许愿失败了，请稍后再试");
-    } finally {
-        btn.textContent = "奉纳许愿";
-        btn.disabled = false;
-    }
-}
-
-
-// ==========================================
-// 其他基础组件 (不变)
-// ==========================================
 function pickRandomSong() {
     if (filteredSongs.length === 0) return;
     const randomIndex = Math.floor(Math.random() * filteredSongs.length);
