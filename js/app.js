@@ -59,13 +59,6 @@ function applyFilters() {
         return matchSearch && matchGenre && matchArtist && matchInitial;
     });
 
-    // 核心保留：带有 tag="NEW" 的歌曲强制排在最前面
-    tempSongs.sort((a, b) => {
-        const aIsNew = (a.tag && a.tag.toUpperCase() === 'NEW') ? 1 : 0;
-        const bIsNew = (b.tag && b.tag.toUpperCase() === 'NEW') ? 1 : 0;
-        return bIsNew - aIsNew; 
-    });
-
     filteredSongs = tempSongs;
     currentPage = 1;
     renderList();
@@ -85,12 +78,9 @@ function renderList() {
     const pageSongs = filteredSongs.slice(start, start + CONFIG.pageSize);
 
     pageSongs.forEach(song => {
-        // 判断是否带有 NEW 标记
-        const isNew = song.tag && song.tag.toUpperCase() === 'NEW';
         const card = document.createElement('div');
         card.className = 'song-card';
         card.innerHTML = `
-            ${isNew ? '<div class="new-badge">NEW</div>' : ''}
             <div class="song-name" title="${song.name}">${song.name}</div>
             <div class="song-meta">
                 <span>${song.artist}</span>
