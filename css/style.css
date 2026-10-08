@@ -265,7 +265,6 @@ header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 40px;
 }
 
 .song-meta {
@@ -397,43 +396,3 @@ header {
 #toast { visibility: hidden; background-color: var(--primary); color: #fff; text-align: center; border-radius: 20px; padding: 10px 20px; position: fixed; z-index: 300; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
 #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
 
-/* =========================================
-   NEW 新歌指示器 (极简微光红点版)
-========================================= */
-.new-badge {
-    position: absolute;
-    /* 不再凸出卡片，而是平齐地放在卡片内部右上角 */
-    top: 16px; 
-    right: 16px;
-    color: #cc5b5b; /* 优雅的灰调珊瑚红 */
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    /* 彻底去掉背景色和边框 */
-    background: transparent; 
-    border: none;
-    box-shadow: none;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-    pointer-events: none; /* 防止阻挡用户的点击 */
-}
-
-/* 纯 CSS 画一个精致的微光小红点在文字左边 */
-.new-badge::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 4px;
-    background-color: #cc5b5b;
-    border-radius: 50%;
-    margin-right: 4px;
-    box-shadow: 0 0 6px rgba(204, 91, 91, 0.8);
-    /* 加入极其微弱的呼吸闪烁感 */
-    animation: breath-dot 2.5s infinite ease-in-out;
-}
-
-@keyframes breath-dot {
-    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 6px rgba(204, 91, 91, 0.8); }
-    50% { opacity: 0.3; transform: scale(0.8); box-shadow: 0 0 2px rgba(204, 91, 91, 0.1); }
-}

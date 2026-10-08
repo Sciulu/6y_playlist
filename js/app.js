@@ -59,7 +59,7 @@ function applyFilters() {
         return matchSearch && matchGenre && matchArtist && matchInitial;
     });
 
-    // 置顶逻辑
+    // 依然保留强力的置顶逻辑
     tempSongs.sort((a, b) => {
         const aIsNew = (a.tag && a.tag.trim().toUpperCase() === 'NEW') ? 1 : 0;
         const bIsNew = (b.tag && b.tag.trim().toUpperCase() === 'NEW') ? 1 : 0;
@@ -86,11 +86,19 @@ function renderList() {
 
     pageSongs.forEach(song => {
         const isNew = song.tag && song.tag.trim().toUpperCase() === 'NEW';
+        
+        // 【核心修改】：在这里组装“跟随高亮”标签，直接融入歌名后面
+        const newBadgeHTML = isNew 
+            ? `<span style="display: inline-block; background: rgba(74, 124, 125, 0.1); color: var(--primary); font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; letter-spacing: 0.5px;">NEW</span>` 
+            : '';
+
         const card = document.createElement('div');
         card.className = 'song-card';
         card.innerHTML = `
-            ${isNew ? '<div class="new-badge">NEW</div>' : ''}
-            <div class="song-name" title="${song.name}">${song.name}</div>
+            <div class="song-name" title="${song.name}" style="display: flex; align-items: center; margin-bottom: 6px;">
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">${song.name}</span>
+                ${newBadgeHTML}
+            </div>
             <div class="song-meta">
                 <span>${song.artist}</span>
                 <span class="song-genre">${song.genre}</span>
