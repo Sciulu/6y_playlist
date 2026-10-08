@@ -59,9 +59,8 @@ function applyFilters() {
         return matchSearch && matchGenre && matchArtist && matchInitial;
     });
 
-    // 【核心修复】：恢复新歌强制置顶的排序逻辑
+    // 置顶逻辑
     tempSongs.sort((a, b) => {
-        // 使用 trim() 防止表格里有多余空格，统一转大写比较
         const aIsNew = (a.tag && a.tag.trim().toUpperCase() === 'NEW') ? 1 : 0;
         const bIsNew = (b.tag && b.tag.trim().toUpperCase() === 'NEW') ? 1 : 0;
         return bIsNew - aIsNew; 
@@ -86,15 +85,12 @@ function renderList() {
     const pageSongs = filteredSongs.slice(start, start + CONFIG.pageSize);
 
     pageSongs.forEach(song => {
-        // 判断是否是新歌
         const isNew = song.tag && song.tag.trim().toUpperCase() === 'NEW';
-        
         const card = document.createElement('div');
         card.className = 'song-card';
         card.innerHTML = `
-            <div class="song-name" title="${song.name}">
-                ${song.name} ${isNew ? '<span style="font-size: 11px; color: #cc527a; font-weight: normal; margin-left: 4px;">(NEW)</span>' : ''}
-            </div>
+            ${isNew ? '<div class="new-badge">NEW</div>' : ''}
+            <div class="song-name" title="${song.name}">${song.name}</div>
             <div class="song-meta">
                 <span>${song.artist}</span>
                 <span class="song-genre">${song.genre}</span>
